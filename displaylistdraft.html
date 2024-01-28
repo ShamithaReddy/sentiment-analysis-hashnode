@@ -1,0 +1,33 @@
+<!-- displaydraft.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Titles</title>
+    <link rel="stylesheet" type="text/css" href="displaylistdraft.css">
+</head>
+<body>
+
+<script>
+    // Retrieve parameters from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const idsParam = urlParams.get('ids');
+    const titlesParam = urlParams.get('titles');
+
+    // Parse JSON-encoded parameters
+    const ids = JSON.parse(decodeURIComponent(idsParam || '[]'));
+    const titles = JSON.parse(decodeURIComponent(titlesParam || '[]'));
+
+    // Display the titles on the page (customize this based on your requirements)
+    document.write('<h1>Displaying Titles</h1>');
+    document.write('<ul>');
+    titles.forEach(title => {
+        document.write(`<li>${title}</li>`);
+    });
+    document.write('</ul>');
+</script>
+
+</body>
+</html>
