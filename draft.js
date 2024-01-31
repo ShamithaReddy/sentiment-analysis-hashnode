@@ -104,11 +104,18 @@ async function verifyAccessToken(accessToken) {
                 edgesArray.forEach(edge => {
                     if (edge.node && edge.node.id) {
                         ids.push(edge.node.id);
-                    }
-                    if (edge.node && edge.node.title) {
-                        titles.push(edge.node.title);
+                        if (edge.node.title){
+                            titles.push(edge.node.title);
+                        }
+                        else{
+                            titles.push("No title for the article");
+                        }
+                        console.log (edge.node.title,edge.node.id)
+
                     }
                 });
+                console.log(titles);
+                console.log(ids);
                 return { ids, titles };
             };
 
