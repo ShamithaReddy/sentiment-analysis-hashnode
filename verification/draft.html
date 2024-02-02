@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Verification Page</title>
+    <link rel="stylesheet" href="draft.css">
+</head>
+<body>
+
+<h1>User Verification Page</h1>
+
+<div class="form-container">
+    <label for="userId">User ID:</label>
+    <input type="text" id="userId" placeholder="Enter User ID">
+    <button id="verifyButton">Verify User ID</button>
+
+    <label for="accessToken" title="Accessible after verifying user">Access Token:</label>
+    <input type="text" id="accessToken" placeholder="Enter Access Token" disabled>
+    <button id="verifyAccessButton">Verify Access Token</button>
+
+
+    <div id="result"></div>
+</div>
+
+<script src="draft.js" defer></script>
+<script>
+
+    // Add an event listener for button click
+    document.getElementById('verifyButton').addEventListener('click', function() {
+        verifyUser(document.getElementById('userId').value);
+    });
+</script>
+<script>
+
+    // Add an event listener for button click
+    document.getElementById('verifyAccessButton').addEventListener('click', function() {
+        verifyAccessToken(document.getElementById('accessToken').value);
+    });
+</script>
+
+</body>
+</html>

@@ -5,7 +5,7 @@ const app = express()
 const path = require('path')
 console.log("Hi FF, you are here A 1");
 const cors = require("cors")
-const port = 8080;
+const port = 55831;
 
 const AWS = require('aws-sdk')
 const { v4: uuidv4 } = require('uuid')
@@ -15,18 +15,23 @@ app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce
 console.log("Hi FF, you are here A 1");
 // Add Access Control Allow Origin headers
 // Assuming you are using Express in Node.js
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*'); // Replace * with the specific origin allowed
-    res.header('Access-Control-Allow-Methods', 'POST');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    next();
+
+
+
+app.use(express.static('routes'));
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 console.log("Hi FF, you are here A 2");
 app.use(cors({
-    origin: 'http://127.0.0.1:8080/put-item',
+    origin: 'http://127.0.0.1:55831/put-item',
 }));
-app.options('http://127.0.0.1:8080/put-item', cors({
+app.options('http://127.0.0.1:55831/put-item', cors({
     origin: '*',
     allowedHeaders: ["Content-Type", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With"],
     credentials: true,
@@ -67,7 +72,6 @@ app.get('/verifyUserId/:userId', async (req, res) => {
     }
 });
 
-app.use(bodyParser.json());
 app.post('/api', async (req, res) => {
     const url = 'https://attwvglakc.execute-api.us-east-1.amazonaws.com';
     const response = await fetch(url, {
@@ -81,6 +85,9 @@ app.post('/api', async (req, res) => {
     const data = await response.json();
     res.json(data);
 });
+
+
+
 
 /*app.post('https://attwvglakc.execute-api.us-east-1.amazonaws.com/', cors({
     origin: '*',
@@ -105,7 +112,7 @@ app.post('/api', async (req, res) => {
 });*/
 
 /*app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:8080'); // Set your client's origin
+    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:55831'); // Set your client's origin
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.header('Access-Control-Allow-Credentials', true);
@@ -146,5 +153,5 @@ app.post('/storeInDynamoDB', (req, res) => {
 });*/
 
 app.listen(port, () => {
-    console.log("Backend server is running at http://127.0.0.1:8080/put-item");
+    console.log("Backend server is running at http://127.0.0.1:55831/");
 });

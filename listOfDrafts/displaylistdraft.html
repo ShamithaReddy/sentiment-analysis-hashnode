@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="displaylistdraft.css">
+
+</head>
+<body>
+
+<header>
+    <img src="../imgs/transparent-purple-violet-bird-cartoon-wing-birds-for-your-graphics-png5e3ffd2a9d5246.0961298415812518826444.png" alt="Cute Image">
+    <h1>My Drafts</h1>
+</header>
+
+<script src="displaylistdraft.js" defer></script>
+
+<script>
+    // Retrieve parameters from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const idsParam = urlParams.get('ids');
+    const titlesParam = urlParams.get('titles');
+    const accessToken = urlParams.get('accessToken');
+
+    // Parse JSON-encoded parameters
+    const ids = JSON.parse(decodeURIComponent(idsParam || '[]'));
+    const titles = JSON.parse(decodeURIComponent(titlesParam || '[]'));
+
+    // Display the titles on the page (customize this based on your requirements)
+    document.write('<ul>');
+    titles.forEach((title, index) => {
+        const titleId = `title_${index}`;
+        document.write(`<li id="${titleId}" class="clickable-title">${title}</li>`);
+
+        // Add event listener for each title
+        const titleElement = document.getElementById(titleId);
+        titleElement.addEventListener('click', () => {
+
+            console.log(`Title "${title}" clicked!`);
+            fetchDraftDetails(ids[titles.indexOf(title)], accessToken);
+        });
+    });
+    document.write('</ul>');
+
+
+</script>
+
+
+
+</body>
+</html>
+
+
