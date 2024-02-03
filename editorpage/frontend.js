@@ -112,6 +112,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Call fetchDataFromDynamoDB with the extracted draftId
     fetchDataFromDynamoDB(draftId);
+    // Add event listener for the "Analyze Content" button
+    /*const analyzeButton = document.getElementById('analyzeButton');
+    analyzeButton.addEventListener('click', async () => {
+        // Get the content to analyze
+        const mainTextElement = document.getElementById('mainText');
+        console.log(document);
+        console.log(mainTextElement);
+        const editableContent = document.querySelector('.editableContent');
+        const contentToAnalyze = editableContent.textContent.trim();
+        //console.log(contentToAnalyze);
+
+        // Define the question for GPT
+        //const gptQuestion = "Analyse the content, get the relevant tags for it, also get popular tags for SEO optimization.Tags are single words which are mostly used in articles or twitter using #";
+        //console.log(contentToAnalyze);
+        // Call GPT API with the content and question
+        await callTagsLambda(contentToAnalyze);});*/
+
 });
 
 async function fetchDataFromDynamoDB(draftId) {
@@ -273,3 +290,112 @@ async function publishDraft(draftId) {
     }
 }
 
+/*async function callTagsLambda(contentToAnalyze) {
+    try {
+        // Show loading spinner or any other visual indication that the request is in progress
+        // e.g., showLoadingIndicator();
+
+        const response = await fetch('http://localhost:3001/callTagsLambda', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ content: contentToAnalyze }),
+        });
+
+        if (!response.ok) {
+            // Handle HTTP error responses (4xx and 5xx)
+            console.error('HTTP error:', response.status);
+            // Hide loading indicator and display an error message to the user
+            // e.g., hideLoadingIndicator(); showErrorToUser('Failed to fetch data');
+            return;
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            console.log('Python script output:', data.result);
+            // Update your UI with the data received from the server
+            // e.g., updateUIWithData(data.result);
+        } else {
+            console.error('Error calling Python script:', data.message);
+            // Handle the case where the server-side script returns an error
+            // e.g., showErrorToUser('Server error: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // Handle unexpected errors
+        // e.g., showErrorToUser('Unexpected error occurred');
+    } finally {
+        // Remove loading indicator, regardless of success or failure
+        // e.g., hideLoadingIndicator();
+    }
+}*/
+
+
+
+
+/*async function callGptApi(content, question) {
+
+    const gptApiEndpoint = 'https://api.openai.com/v1/chat/completions'; // Replace with your GPT API endpoint
+    const openaiApiKey = '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'; // Replace with your OpenAI API key
+
+
+    try {
+        const response = await fetch(gptApiEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${openaiApiKey}`,
+            },
+            body: JSON.stringify({
+                content: gptContent,
+            }),
+
+        });
+        console.log(response);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log(result);
+
+        // Display the result in a pop-up UI
+        displayTagsPopup(result.tags);
+    } catch (error) {
+        console.error('Error calling GPT API:', error.message);
+        // Handle error as needed
+    }
+}*/
+
+function displayTagsPopup(tags) {
+    // Create a pop-up UI to display the tags
+    const popupContainer = document.createElement('div');
+    popupContainer.classList.add('tags-popup');
+
+    const tagsList = document.createElement('ul');
+
+    // Add relevant tags
+    const relevantTagsItem = document.createElement('li');
+    relevantTagsItem.textContent = `Relevant Tags: ${tags.relevantTags.join(', ')}`;
+    tagsList.appendChild(relevantTagsItem);
+
+    // Add popular tags for SEO optimization
+    const seoTagsItem = document.createElement('li');
+    seoTagsItem.textContent = `SEO Tags: ${tags.seoTags.join(', ')}`;
+    tagsList.appendChild(seoTagsItem);
+
+    popupContainer.appendChild(tagsList);
+
+    // Add the pop-up container to the body
+    document.body.appendChild(popupContainer);
+
+    // Close the pop-up on click outside
+    document.addEventListener('click', (event) => {
+        if (!popupContainer.contains(event.target)) {
+            popupContainer.remove();
+        }
+    });
+}

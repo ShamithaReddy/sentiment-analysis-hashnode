@@ -10,7 +10,7 @@ async function verifyUser() {
     const userVerificationUrl = `https://hashnode.com/@${userId}`;
 
     try {
-        const userVerificationResponse = await fetch(userVerificationUrl, { mode: 'no-cors' });
+        const userVerificationResponse = await fetch(userVerificationUrl);
 
         if (userVerificationResponse.status === 200 || userVerificationResponse.status === 0) {
             displayResult('User ID is valid. You can proceed to verify the Access Token.');

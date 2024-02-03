@@ -6,10 +6,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
   <script src="https://cdn.tiny.cloud/1/ncb7wo2yqz9oy16a7bskktfbc6sc3oiggmjbi3y65a33x3o5/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js" data-main="frontend"></script>
+
+
+
+  <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"></script>
 
+<!--<button id="analyzeButton">Analyze Content</button>-->
 <div id="wholecontainer">
 <!-- Your HTML content goes here -->
 <div id="mainText">
@@ -17,7 +24,9 @@
 </div>
 <div id="result"></div>
 </div>
-<script src="frontend.js"></script>
+
+<script type="module" src="frontend.js"></script>
+
 
 </body>
 </html>

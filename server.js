@@ -5,7 +5,7 @@ const app = express()
 const path = require('path')
 console.log("Hi FF, you are here A 1");
 const cors = require("cors")
-const port = 55831;
+const port = 3001;
 
 const AWS = require('aws-sdk')
 const { v4: uuidv4 } = require('uuid')
@@ -17,7 +17,7 @@ console.log("Hi FF, you are here A 1");
 // Assuming you are using Express in Node.js
 
 
-
+app.use(cors());
 app.use(express.static('routes'));
 
 // catch 404 and forward to error handler
@@ -28,15 +28,9 @@ app.use(function(req, res, next) {
 });
 
 console.log("Hi FF, you are here A 2");
-app.use(cors({
-    origin: 'http://127.0.0.1:55831/put-item',
-}));
-app.options('http://127.0.0.1:55831/put-item', cors({
-    origin: '*',
-    allowedHeaders: ["Content-Type", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With"],
-    credentials: true,
-    methods: '*',
-}));
+
+
+
 
 console.log("Hi FF, you are here A 3");
 app.use(express.static(path.join(__dirname, 'public')));
@@ -88,70 +82,103 @@ app.post('/api', async (req, res) => {
 
 
 
+// Middleware to parse JSON body
+app.use(bodyParser.json());
 
-/*app.post('https://attwvglakc.execute-api.us-east-1.amazonaws.com/', cors({
-    origin: '*',
-    allowedHeaders: ["Content-Type", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With"],
-    credentials: true,
-    methods: '*',
-}), (req, res) => {
-    const params = {
-        TableName: 'hashnodedata',
-        Item: item,
-    };
+// Endpoint to handle the POST request from frontend
+/*app.post('/callTagsLambda', (req, res) => {
+    const contentToAnalyze = req.body.content;
 
-    docClient.put(params, (err, data) => {
-        if (err) {
-            console.error('Unable to add item. Error JSON:', JSON.stringify(err, null, 2));
-            res.status(500).json({ error: 'Unable to add item.' });
-        } else {
-            console.log('Added item:', JSON.stringify(data, null, 2));
-            res.json({ message: 'Item added successfully.' });
+    // Replace 'your-python-script.py' with the actual filename of your Python script
+    const pythonScriptPath = 'your-python-script.py';
+
+    // Execute the Python script using child_process module
+    exec(`python ${pythonScriptPath} "${contentToAnalyze}"`, (error, stdout, stderr) => {
+        if (error) {
+            console.error('Error executing Python script:', error);
+            return res.status(500).json({ success: false, message: 'Internal Server Error' });
         }
+
+        // Assuming your Python script outputs JSON
+
+        let result;
+        try {
+            result = JSON.parse(stdout);
+            if (result){
+                return {
+                    statusCode: 200,
+                    body: result,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'OPTIONS, GET',
+                    },
+                };
+            else{
+                    statusCode: 404,
+                        body: result,
+                        headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'OPTIONS, GET',
+                    },
+                }
+        }
+        } catch (jsonError) {
+            console.error('Error parsing JSON from Python script output:', jsonError);
+            return res.status(500).json({ success: false, message: 'Invalid JSON from Python script' });
+        }
+
+        // Send the processed output back to the frontend
+        res.json({ success: true, result });
     });
 });*/
 
-/*app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:55831'); // Set your client's origin
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', true);
+app.use(cors({ optionsSuccessStatus: 200 }));
+app.post('/callTagsLambda', (req, res) => {
+    const contentToAnalyze = req.body.content;
 
-    if (req.method === 'OPTIONS') {
-        res.sendStatus(200);
-    } else {
-        next();
-    }
-});
+    // Replace 'your-python-script.py' with the actual filename of your Python script
+    const pythonScriptPath = 'your-python-script.py';
 
-app.options('/storeInDynamoDB', (req, res) => {
-    res.sendStatus(200);
-});
+    // Execute the Python script using child_process module
+    exec(`python ${pythonScriptPath} "${contentToAnalyze}"`, (error, stdout, stderr) => {
+        if (error) {
+            console.error('Error executing Python script:', error);
+            return res.status(500).json({ success: false, message: 'Internal Server Error' });
+        }
 
-// Endpoint to store data in DynamoDB
-app.post('/storeInDynamoDB', (req, res) => {
-    const dataToStore = req.body;
+        // Assuming your Python script outputs JSON
+        let result;
+        try {
+            result = JSON.parse(stdout);
 
-    // Generate a unique ID for each record using the 'uuid' library
-    dataToStore.id = uuidv4();
-
-    // Define the DynamoDB parameters
-    const params = {
-        TableName: 'YourTableName', // Replace with your DynamoDB table name
-        Item: dataToStore
-    };
-
-    // Put the data into DynamoDB
-    dynamoDB.put(params, (err) => {
-        if (err) {
-            console.error('Error storing data in DynamoDB:', err);
-            res.status(500).send('Internal Server Error');
-        } else {
-            res.json({ message: 'Data stored in DynamoDB successfully' });
+            if (result) {
+                return res.status(200).json({
+                    success: true,
+                    result,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'OPTIONS, GET',
+                    },
+                });
+            } else {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Result not found',
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'OPTIONS, GET',
+                    },
+                });
+            }
+        } catch (jsonError) {
+            console.error('Error parsing JSON from Python script output:', jsonError);
+            return res.status(500).json({ success: false, message: 'Invalid JSON from Python script' });
         }
     });
-});*/
+});
+
+
 
 app.listen(port, () => {
-    console.log("Backend server is running at http://127.0.0.1:55831/");
+    console.log("Backend server is running at http://127.0.0.1:3001/");
 });
